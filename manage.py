@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import os
 COV = None
 if os.environ.get('FLASK_COVERAGE'):
@@ -67,7 +68,7 @@ def deploy():
     Role.insert_roles()
 
     # create self-follows for all users
-    User.add_self_follows()
+    #User.add_self_follows()
 
 
 if __name__ == '__main__':
