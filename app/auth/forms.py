@@ -19,11 +19,10 @@ class RegistrationForm(Form):
                                            Email()])
     username = StringField(u'用户名', validators=[
         Required(), Length(1, 64), Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
-                                          'Usernames must have only letters, '
-                                          'numbers, dots or underscores')])
+                                          u'用户名必须是字母或数字，并且只能以字母开头！' )])
     password = PasswordField(u'密码', validators=[
-        Required(), EqualTo('password2', message='Passwords must match.')])
-    password2 = PasswordField(u'确定密码', validators=[Required()])
+        Required(), EqualTo('password2', message=u'两次输入密码必须匹配！')])
+    password2 = PasswordField(u'确定密码', validators=[Required(), ] )
     submit = SubmitField(u'注册')
 
     def validate_email(self, field):
@@ -38,7 +37,7 @@ class RegistrationForm(Form):
 class ChangePasswordForm(Form):
     old_password = PasswordField(u'原密码', validators=[Required()])
     password = PasswordField(u'新密码', validators=[
-        Required(), EqualTo('password2', message='Passwords must match')])
+        Required(), EqualTo('password2', message=u'两次输入密码必须匹配！')])
     password2 = PasswordField(u'确认密码', validators=[Required()])
     submit = SubmitField(u'更新密码')
 
@@ -53,7 +52,7 @@ class PasswordResetForm(Form):
     email = StringField('Email', validators=[Required(), Length(1, 64),
                                              Email()])
     password = PasswordField(u'密码', validators=[
-        Required(), EqualTo('password2', message='Passwords must match')])
+        Required(), EqualTo('password2', message=u'两次输入密码必须匹配')])
     password2 = PasswordField(u'确认密码', validators=[Required()])
     submit = SubmitField(u'重置密码')
 
