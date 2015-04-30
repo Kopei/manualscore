@@ -1,7 +1,7 @@
-<p>Dear {{ user.username }},</p>
-<p>To confirm your new email address <a href="{{ url_for('auth.change_email', token=token, _external=True) }}">click here</a>.</p>
-<p>Alternatively, you can paste the following link in your browser's address bar:</p>
+<p>尊敬的 {{ user.username }},</p>
+<p>请点击此处激活您的新邮箱：<a href="{{ url_for('auth.change_email', token=token, _external=True) }}">点我</a>.</p>
+<p>或者，您可以将如下链接粘贴至浏览器:</p>
 <p>{{ url_for('auth.change_email', token=token, _external=True) }}</p>
-<p>Sincerely,</p>
-<p>The Flasky Team</p>
+<p>感谢您使用手策!</p>
+<p>手策团队敬上</p>
 <p><small>Note: replies to this email address are not monitored.</small></p>
