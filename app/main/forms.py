@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask.ext.wtf import Form
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import StringField, TextAreaField, BooleanField, SelectField,\
     SubmitField
 from wtforms.validators import Required, Length, Email, Regexp
@@ -17,6 +18,7 @@ class EditProfileForm(Form):
     name = StringField(u'实名', validators=[Length(0, 64)])
     location = StringField(u'地区', validators=[Length(0, 64)])
     about_me = TextAreaField(u'关于我')
+
     submit = SubmitField(u'提交')
 
 
@@ -51,8 +53,12 @@ class EditProfileAdminForm(Form):
 
 
 class PostForm(Form):
-    body = PageDownField(u"发表你对一份手册的看法吧！", validators=[Required()])
+    title = StringField(u'标题', validators=[Required(), Length(1, 128)])
+    body = TextAreaField(u"发表对一份手册的看法吧！", validators=[Required()])
+    upload = FileField(u'您的手册')   #, #validators=[ FileAllowed(['pdf'], u'只支持pdf格式')])
     submit = SubmitField(u'发表')
+
+#class Upload(Form):
 
 
 class CommentForm(Form):

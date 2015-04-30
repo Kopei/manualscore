@@ -297,6 +297,7 @@ class Post(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
+    upload = db.Column(db.UnicodeText)
 
     @staticmethod
     def generate_fake(count=100):

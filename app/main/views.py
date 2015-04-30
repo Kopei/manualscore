@@ -9,6 +9,8 @@ from .forms import EditProfileForm, EditProfileAdminForm, PostForm,\
 from .. import db
 from ..models import Permission, Role, User, Post, Comment
 from ..decorators import admin_required, permission_required
+from werkzeug import secure_filename
+
 
 
 @main.after_app_request
@@ -38,10 +40,15 @@ def index():
     form = PostForm()
     if current_user.can(Permission.WRITE_ARTICLES) and \
             form.validate_on_submit():
+
+        filename = secure_filename(request.files['file'].filename)
+        form.upload.data.save('uploads/'+filename)
         post = Post(body=form.body.data,
+                    upload=filename,
                     author=current_user._get_current_object())
         db.session.add(post)
         return redirect(url_for('.index'))
+
     page = request.args.get('page', 1, type=int)
     show_followed = False
     if current_user.is_authenticated():
