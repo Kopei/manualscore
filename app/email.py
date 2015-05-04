@@ -1,4 +1,7 @@
 # -*- coding:utf-8 -*-
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 from threading import Thread
 from flask import current_app, render_template
 from flask.ext.mail import Message

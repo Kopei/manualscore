@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 from flask.ext.wtf import Form
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import StringField, TextAreaField, BooleanField, SelectField,\
@@ -54,8 +57,8 @@ class EditProfileAdminForm(Form):
 
 class PostForm(Form):
     title = StringField(u'标题', validators=[Required(), Length(1, 128)])
-    body = TextAreaField(u"发表对一份手册的看法吧！", validators=[Required()])
-    upload = FileField(u'您的手册')   #, #validators=[ FileAllowed(['pdf'], u'只支持pdf格式')])
+    body = PageDownField(u"发表对一份手册的看法吧！", validators=[Required()])
+    upload = FileField(u'您的手册', validators=[FileRequired(u'请上传一份手册'), FileAllowed(['pdf'], u'只支持pdf格式')])
     submit = SubmitField(u'发表')
 
 #class Upload(Form):

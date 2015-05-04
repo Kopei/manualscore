@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 from flask import render_template, redirect, url_for, abort, flash, request,\
     current_app, make_response
 from flask.ext.login import login_required, current_user
@@ -41,7 +44,7 @@ def index():
     if current_user.can(Permission.WRITE_ARTICLES) and \
             form.validate_on_submit():
 
-        filename = secure_filename(request.files['file'].filename)
+        filename = secure_filename(form.upload.data.filename)
         form.upload.data.save('uploads/'+filename)
         post = Post(body=form.body.data,
                     upload=filename,
