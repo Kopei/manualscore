@@ -77,6 +77,7 @@ class User(UserMixin, db.Model):
     name = db.Column(db.Unicode(64))
     location = db.Column(db.Unicode(64))
     about_me = db.Column(db.UnicodeText())
+    occupation = db.Column(db.UnicodeText())
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
@@ -127,7 +128,7 @@ class User(UserMixin, db.Model):
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         if self.role is None:
-            if self.email == current_app.config['FLASKY_ADMIN']:
+            if self.email == current_app.config['ADMIN']:
                 self.role = Role.query.filter_by(permissions=0xff).first()
             if self.role is None:
                 self.role = Role.query.filter_by(default=True).first()

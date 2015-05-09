@@ -9,7 +9,7 @@
   <h1>欢迎来到手策！</h1>
 
     <p>让我们一起分享那些年读过的手册吧！</p>
-    <p>您可以搜索、发表所需的工程技术书册,发表手策请先注册账号喔！</p>
+    <p>您可以搜索、发表所需的工程技术书册, 发表手策前请先注册账号喔！</p>
     {% if current_user.can(Permission.WRITE_ARTICLES) %}
     <p><a href="{{url_for('main.post', id=current_user.id)}}" class="btn btn-primary btn-large">发布</a></p>
     {% else %}

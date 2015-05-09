@@ -20,8 +20,8 @@ class NameForm(Form):
 class EditProfileForm(Form):
     name = StringField(u'实名', validators=[Length(0, 64)])
     location = StringField(u'地区', validators=[Length(0, 64)])
+    occupation = StringField(u"所属行业", validators=[Length(0,64)])
     about_me = TextAreaField(u'关于我')
-
     submit = SubmitField(u'提交')
 
 
