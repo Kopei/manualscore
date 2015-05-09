@@ -23,6 +23,8 @@ class Config:
     UPLOAD_FOLDER = '/path/to/upload'
     ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'jpg', 'png', 'gif', 'jpeg'])
     ALLOW_MAX_FILE = 16 * 1024 * 1024
+    WHOOSH_BASE = os.path.join(basedir, 'search.db')
+    MAX_SEARCH_RESULTS = 50
 
     @staticmethod
     def init_app(app):

@@ -8,12 +8,12 @@ from flask.ext.login import login_required, current_user
 from flask.ext.sqlalchemy import get_debug_queries
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm,\
-    CommentForm
+    CommentForm, SearchForm
 from .. import db
 from ..models import Permission, Role, User, Post, Comment
 from ..decorators import admin_required, permission_required
 from werkzeug import secure_filename
-
+from config import Config
 
 
 @main.after_app_request
@@ -40,18 +40,18 @@ def server_shutdown():
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    form = PostForm()
-    if current_user.can(Permission.WRITE_ARTICLES) and \
-            form.validate_on_submit():
-
-        filename = secure_filename(form.upload.data.filename)
-        form.upload.data.save('uploads/'+filename)
-        post = Post(body=form.body.data,
-                    upload=filename,
-                    author=current_user._get_current_object())
-        db.session.add(post)
-        return redirect(url_for('.index'))
-
+    form = SearchForm()
+    if form.validate_on_submit():
+        return redirect(url_for('search_results', query=form.search.data))
+ #   if current_user.can(Permission.WRITE_ARTICLES) and \
+ #           form.validate_on_submit():
+ #       filename = secure_filename(form.upload.data.filename)
+ #       form.upload.data.save('uploads/'+filename)
+ #       post = Post(body=form.body.data,
+ #                   upload=filename,
+ #                   author=current_user._get_current_object())
+ #       db.session.add(post)
+ #       return redirect(url_for('.index'))
     page = request.args.get('page', 1, type=int)
     show_followed = False
     if current_user.is_authenticated():
@@ -64,8 +64,19 @@ def index():
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     posts = pagination.items
-    return render_template('index.html', form=form, posts=posts,
+    return render_template('home.html', form=form, posts=posts,
                            show_followed=show_followed, pagination=pagination)
+
+
+@main.route('/search_results/<query>')
+def search_results(query):
+    results = Post.query.whoosh_search(query, Config.MAX_SEARCH_RESULTS).all()
+    return render_template('search_results.html', query=query, results=results)
+
+
+@main.route('/about')
+def about():
+    return render_template('about.html')
 
 
 @main.route('/user/<username>')

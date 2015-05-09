@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends "layout.html" %}
 {% import "_macros.html" as macros %}
 
 {% block title %}手策 - {{ title }} {{ user.username }}{% endblock %}
 
-{% block page_content %}
+{% block content %}
 <div class="page-header">
     <h1>{{ title }} {{ user.username }}</h1>
 </div>

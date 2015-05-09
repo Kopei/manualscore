@@ -12,6 +12,8 @@ from flask import current_app, request, url_for
 from flask.ext.login import UserMixin, AnonymousUserMixin
 from app.exceptions import ValidationError
 from . import db, login_manager
+import flask.ext.whooshalchemy as whooshalchemy
+from app import create_app
 
 
 class Permission:
@@ -294,6 +296,7 @@ def load_user(user_id):
 
 class Post(db.Model):
     __tablename__ = 'posts'
+    __searchable__ = ['body']
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.UnicodeText)
     body_html = db.Column(db.Text)
@@ -349,6 +352,7 @@ class Post(db.Model):
 
 
 db.event.listen(Post.body, 'set', Post.on_changed_body)
+#whooshalchemy.whoosh_index(create_app('default'), Post)
 
 
 class Comment(db.Model):

@@ -47,15 +47,16 @@ class EditProfileAdminForm(Form):
     def validate_email(self, field):
         if field.data != self.user.email and \
                 User.query.filter_by(email=field.data).first():
-            raise ValidationError('Email already registered.')
+            raise ValidationError(u'邮箱已经被使用！请激活邮箱或换个邮箱。')
 
     def validate_username(self, field):
         if field.data != self.user.username and \
                 User.query.filter_by(username=field.data).first():
-            raise ValidationError('Username already in use.')
+            raise ValidationError(u'用户名已经被使用。')
 
 
 class PostForm(Form):
+
     title = StringField(u'标题', validators=[Required(), Length(1, 128)])
     body = PageDownField(u"发表对一份手册的看法吧！", validators=[Required()])
     upload = FileField(u'您的手册', validators=[FileRequired(u'请上传一份手册'), FileAllowed(['pdf'], u'只支持pdf格式')])
@@ -67,3 +68,11 @@ class PostForm(Form):
 class CommentForm(Form):
     body = StringField(u'评论', validators=[Required()])
     submit = SubmitField(u'提交')
+
+
+class SearchForm(Form):
+    search = StringField('', validators=[Required()])
+    submit = SubmitField(u'查找')
+
+
+

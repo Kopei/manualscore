@@ -1,10 +1,10 @@
-{% extends "base.html" %}
+{% extends "layout.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% import "_macros.html" as macros %}
 
 {% block title %}手策 - 手册{% endblock %}
 
-{% block page_content %}
+{% block content %}
 {% include '_posts.html' %}
 <h4 id="comments">Comments</h4>
 {% if current_user.can(Permission.COMMENT) %}

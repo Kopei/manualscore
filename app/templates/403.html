@@ -1,9 +1,14 @@
-{% extends "base.html" %}
+{% extends "layout.html" %}
 
 {% block title %}手策 - Forbidden{% endblock %}
 
-{% block page_content %}
-<div class="page-header">
-    <h1>Forbidden</h1>
+{% block content %}
+<div class="jumbotron">
+    <div class="text-center">
+        <h1>403<h1>
+        <p>您没有权限查看此页，请点击 <a href="{{ url_for('public.home')}}">登入</a> 或
+            <a href="{{ url_for('public.register') }}">建立账号</a>.
+        </p>
+    </div>
 </div>
 {% endblock %}
