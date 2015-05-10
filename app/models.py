@@ -82,6 +82,7 @@ class User(UserMixin, db.Model):
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+    uploads = db.relationship('Upload', backref='author', lazy='dynamic')
     # pls note how to deal with user and followers relationship
     followed = db.relationship('Follow',
                                foreign_keys=[Follow.follower_id],
@@ -306,7 +307,6 @@ class Post(db.Model):
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
     tags = db.Column(db.UnicodeText)
     title = db.Column(db.UnicodeText)
-    upload = db.Column(db.UnicodeText)
 
     @staticmethod
     def generate_fake(count=100):
@@ -356,6 +356,15 @@ class Post(db.Model):
 
 db.event.listen(Post.body, 'set', Post.on_changed_body)
 #whooshalchemy.whoosh_index(create_app('default'), Post)
+
+
+class Upload(db.Model):
+    __talbename__ = 'uploads'
+    id = db.Column(db.Integer, primary_key=True)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    upload = db.Column(db.Text, index=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
 
 class Comment(db.Model):

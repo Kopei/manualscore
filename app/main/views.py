@@ -4,14 +4,14 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 from flask import render_template, redirect, url_for, abort, flash, request, \
-    current_app, make_response
+    current_app, make_response, g
 from flask.ext.login import login_required, current_user
 from flask.ext.sqlalchemy import get_debug_queries
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm, \
     CommentForm, SearchForm, UploadForm
 from .. import db
-from ..models import Permission, Role, User, Post, Comment
+from ..models import Permission, Role, User, Post, Comment, Upload
 from ..decorators import admin_required, permission_required
 from werkzeug import secure_filename
 from config import Config
@@ -186,16 +186,19 @@ def create(id):
     upload = UploadForm()
     if current_user.can(Permission.WRITE_ARTICLES) and \
         upload.validate_on_submit():
-        filename = secure_filename(form.upload.data.filename)
-        form.upload.data.save('uploads/'+filename)
+        filename = secure_filename(upload.upload.data.filename)
+        upload.upload.data.save('uploads/'+filename)
+        upload_filename = Upload(upload=filename, author=current_user._get_current_object())
+        db.session.add(upload_filename)
+        flash(u'您的手策已经上传，请发表评论！')
     if current_user.can(Permission.WRITE_ARTICLES) and \
         form.validate_on_submit():
-        post = Post(body=form.body.data, upload=filename, tags=form.tags.data, title=form.title.data,
-                       author_id=current_user._get_current_object())
+        post = Post(title=form.title.data, body=form.body.data,  tags=form.tags.data,
+                       author=current_user._get_current_object())
         db.session.add(post)
         flash(u"您已经发表了一份手策！")
-        return redirect(url_for('.home'))
-    return render_template('create.html', form=form, upload=upload, )
+        return redirect(url_for('.index'))
+    return render_template('create.html', form=form, upload=upload)
 
 
 @main.route('/preview', methods=["POST"])

@@ -64,9 +64,8 @@ class PostForm(Form):
 
 
 class UploadForm(Form):
-    upload = FileField(u'您的手册', validators=[FileRequired(u'请上传一份手册'), FileAllowed(['pdf'], u'只支持pdf格式')])
+    upload = FileField(u'请先上传一份手册', validators=[FileRequired(u'请上传一份手册'), FileAllowed(['pdf'], u'只支持pdf格式')])
     submit = SubmitField(u'上传')
-
 
 class CommentForm(Form):
     body = StringField(u'评论', validators=[Required()])
