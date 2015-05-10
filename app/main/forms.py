@@ -58,11 +58,14 @@ class EditProfileAdminForm(Form):
 class PostForm(Form):
 
     title = StringField(u'标题', validators=[Required(), Length(1, 128)])
-    body = PageDownField(u"发表对一份手册的看法吧！", validators=[Required()])
-    upload = FileField(u'您的手册', validators=[FileRequired(u'请上传一份手册'), FileAllowed(['pdf'], u'只支持pdf格式')])
+    body = TextAreaField(u"发表对一份手册的看法吧！", validators=[Required()])
+    tags = StringField(u'标签', validators=[Required()])
     submit = SubmitField(u'发表')
 
-#class Upload(Form):
+
+class UploadForm(Form):
+    upload = FileField(u'您的手册', validators=[FileRequired(u'请上传一份手册'), FileAllowed(['pdf'], u'只支持pdf格式')])
+    submit = SubmitField(u'上传')
 
 
 class CommentForm(Form):

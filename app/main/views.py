@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
 import sys
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
-from flask import render_template, redirect, url_for, abort, flash, request,\
+from flask import render_template, redirect, url_for, abort, flash, request, \
     current_app, make_response
 from flask.ext.login import login_required, current_user
 from flask.ext.sqlalchemy import get_debug_queries
 from . import main
-from .forms import EditProfileForm, EditProfileAdminForm, PostForm,\
-    CommentForm, SearchForm
+from .forms import EditProfileForm, EditProfileAdminForm, PostForm, \
+    CommentForm, SearchForm, UploadForm
 from .. import db
 from ..models import Permission, Role, User, Post, Comment
 from ..decorators import admin_required, permission_required
 from werkzeug import secure_filename
 from config import Config
+from ..editor import Processors
 
 
 @main.after_app_request
@@ -43,15 +45,15 @@ def index():
     form = SearchForm()
     if form.validate_on_submit():
         return redirect(url_for('search_results', query=form.search.data))
- #   if current_user.can(Permission.WRITE_ARTICLES) and \
- #           form.validate_on_submit():
- #       filename = secure_filename(form.upload.data.filename)
- #       form.upload.data.save('uploads/'+filename)
- #       post = Post(body=form.body.data,
- #                   upload=filename,
- #                   author=current_user._get_current_object())
- #       db.session.add(post)
- #       return redirect(url_for('.index'))
+        # if current_user.can(Permission.WRITE_ARTICLES) and \
+        #           form.validate_on_submit():
+        #       filename = secure_filename(form.upload.data.filename)
+        #       form.upload.data.save('uploads/'+filename)
+        #       post = Post(body=form.body.data,
+        #                   upload=filename,
+        #                   author=current_user._get_current_object())
+        #       db.session.add(post)
+        #       return redirect(url_for('.index'))
     page = request.args.get('page', 1, type=int)
     show_followed = False
     if current_user.is_authenticated():
@@ -137,6 +139,7 @@ def edit_profile_admin(id):
     return render_template('edit_profile.html', form=form, user=user)
 
 
+# this is actually comment
 @main.route('/post/<int:id>', methods=['GET', 'POST'])
 def post(id):
     post = Post.query.get_or_404(id)
@@ -151,7 +154,7 @@ def post(id):
     page = request.args.get('page', 1, type=int)
     if page == -1:
         page = (post.comments.count() - 1) / \
-            current_app.config['COMMENTS_PER_PAGE'] + 1
+               current_app.config['COMMENTS_PER_PAGE'] + 1
     pagination = post.comments.order_by(Comment.timestamp.asc()).paginate(
         page, per_page=current_app.config['COMMENTS_PER_PAGE'],
         error_out=False)
@@ -175,6 +178,45 @@ def edit(id):
         return redirect(url_for('.post', id=post.id))
     form.body.data = post.body
     return render_template('edit_post.html', form=form)
+
+
+@main.route('/create/<int:id>', methods=['GET', 'POST'])
+def create(id):
+    form = PostForm()
+    upload = UploadForm()
+    if current_user.can(Permission.WRITE_ARTICLES) and \
+        upload.validate_on_submit():
+        filename = secure_filename(form.upload.data.filename)
+        form.upload.data.save('uploads/'+filename)
+    if current_user.can(Permission.WRITE_ARTICLES) and \
+        form.validate_on_submit():
+        post = Post(body=form.body.data, upload=filename, tags=form.tags.data, title=form.title.data,
+                       author_id=current_user._get_current_object())
+        db.session.add(post)
+        flash(u"您已经发表了一份手策！")
+        return redirect(url_for('.home'))
+    return render_template('create.html', form=form, upload=upload, )
+
+
+@main.route('/preview', methods=["POST"])
+def preview():
+    a = request.form
+    data = {}
+    processed = Processors(a['body'])
+    data['html'], data['body'], data['meta'] = processed.out()
+    return data['html']
+#@main.route('/edit/<path:url>/', methods=['GET', 'POST'])
+#def dd(url):
+#    page = wiki.get(url)
+#    form = EditorForm(obj=page)
+#    if form.validate_on_submit():
+#        if not page:
+#            page = wiki.get_bare(url)
+#        form.populate_obj(page)
+#        page.save()
+#        flash('"%s" was saved.' % page.title, 'success')
+#        return redirect(url_for('display', url=url))
+#    return render_template('editor.html', form=form, page=page)
 
 
 @main.route('/follow/<username>')
@@ -247,7 +289,7 @@ def followed_by(username):
 @login_required
 def show_all():
     resp = make_response(redirect(url_for('.index')))
-    resp.set_cookie('show_followed', '', max_age=30*24*60*60)
+    resp.set_cookie('show_followed', '', max_age=30 * 24 * 60 * 60)
     return resp
 
 
@@ -255,7 +297,7 @@ def show_all():
 @login_required
 def show_followed():
     resp = make_response(redirect(url_for('.index')))
-    resp.set_cookie('show_followed', '1', max_age=30*24*60*60)
+    resp.set_cookie('show_followed', '1', max_age=30 * 24 * 60 * 60)
     return resp
 
 

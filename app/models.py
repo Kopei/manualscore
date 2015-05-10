@@ -297,13 +297,15 @@ def load_user(user_id):
 
 class Post(db.Model):
     __tablename__ = 'posts'
-    __searchable__ = ['body']
+    __searchable__ = ['body', 'title']
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.UnicodeText)
-    body_html = db.Column(db.Text)
+    body_html = db.Column(db.UnicodeText)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
+    tags = db.Column(db.UnicodeText)
+    title = db.Column(db.UnicodeText)
     upload = db.Column(db.UnicodeText)
 
     @staticmethod

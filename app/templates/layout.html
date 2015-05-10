@@ -20,6 +20,7 @@
   <meta name="viewport" content="width=device-width">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.css') }}">
   {% assets "css_all" %}
     <link rel="stylesheet" href="{{ ASSET_URL }}">
   {% endassets %}
@@ -52,17 +53,28 @@
         {% endif %}
     {% endwith %}
 
-    {% block content %}{% endblock %}
+    <div class="row">
+            <div class="col-sm-8">
+                {% block content %}
+                {% endblock %}
+            </div>
+            <div class="col-sm-3 col-sm-offset1">
+                {% block sidebar %}
+                {% endblock %}
+            </div>
+        </div>
   </div>
 
 </div><!-- end container -->
 
-{% include "footer.html" %}
+
 
 <!-- JavaScript at the bottom for fast page loading -->
 {% block scripts %}
 <script src="{{bootstrap_find_resource('jquery.js', cdn='jquery')}}"></script>
 <script src="{{bootstrap_find_resource('js/bootstrap.js', cdn='bootstrap')}}"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.min.js "></script>
+<script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
 {{ moment.include_moment() }}
 
 {% endblock %}
@@ -70,4 +82,4 @@
 {% endblock %}
 </body>
 </html>
-
+{% include "footer.html" %}

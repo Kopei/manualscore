@@ -1,13 +1,13 @@
-"""init db
+"""change tags
 
-Revision ID: 2df33569bf1a
+Revision ID: 3c3d8c95807a
 Revises: None
-Create Date: 2015-05-09 17:29:29.002456
+Create Date: 2015-05-10 15:46:48.138861
 
 """
 
 # revision identifiers, used by Alembic.
-revision = '2df33569bf1a'
+revision = '3c3d8c95807a'
 down_revision = None
 
 from alembic import op
