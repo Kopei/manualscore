@@ -68,8 +68,8 @@ class UploadForm(Form):
     submit = SubmitField(u'上传')
 
 class CommentForm(Form):
-    body = StringField(u'评论', validators=[Required()])
-    submit = SubmitField(u'提交')
+    body = TextAreaField(u'评论', validators=[Required()])
+    #submit = SubmitField(u'提交')
 
 
 class SearchForm(Form):
