@@ -360,7 +360,6 @@ class Post(db.Model):
 
 
 db.event.listen(Post.body, 'set', Post.on_changed_body)
-#whooshalchemy.whoosh_index(create_app('default'), Post)
 
 
 class Upload(db.Model):

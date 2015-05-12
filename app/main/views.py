@@ -43,17 +43,8 @@ def server_shutdown():
 @main.route('/', methods=['GET', 'POST'])
 def index():
     form = SearchForm()
-    if form.validate_on_submit():
-        return redirect(url_for('search_results', query=form.search.data))
-        # if current_user.can(Permission.WRITE_ARTICLES) and \
-        #           form.validate_on_submit():
-        #       filename = secure_filename(form.upload.data.filename)
-        #       form.upload.data.save('uploads/'+filename)
-        #       post = Post(body=form.body.data,
-        #                   upload=filename,
-        #                   author=current_user._get_current_object())
-        #       db.session.add(post)
-        #       return redirect(url_for('.index'))
+    #if search_form.validate_on_submit():
+    #    return redirect(url_for('search_results', query=search_form.search.data))
     page = request.args.get('page', 1, type=int)
     show_followed = False
     if current_user.is_authenticated():
@@ -69,10 +60,17 @@ def index():
     return render_template('home.html', form=form, posts=posts,
                            show_followed=show_followed, pagination=pagination)
 
+@main.route('/search', methods=['POST'])
+def search():
+    if not g.search_form.validate_on_submit():
+        return redirect(url_for('.index'))
+    return redirect(url_for('.search_results', query = g.search_form.search.data))
+
 
 @main.route('/search_results/<query>')
 def search_results(query):
-    results = Post.query.whoosh_search(query, Config.MAX_SEARCH_RESULTS).all()
+    results = Post.query.whoosh_search(query, Config.MAX_SEARCH_RESULTS, or_=True).all()
+
     return render_template('search_results.html', query=query, results=results)
 
 
@@ -216,13 +214,13 @@ def create(id):
 
 
 
-@main.route('/preview', methods=["POST"])
-def preview():
-    a = request.form
-    data = {}
-    processed = Processors(a['body'])
-    data['html'], data['body'], data['meta'] = processed.out()
-    return data['html']
+#@main.route('/preview', methods=["POST"])
+#def preview():
+#    a = request.form
+#    data = {}
+#    processed = Processors(a['body'])
+#    data['html'], data['body'], data['meta'] = processed.out()
+#    return data['html']
 #@main.route('/edit/<path:url>/', methods=['GET', 'POST'])
 #def dd(url):
 #    page = wiki.get(url)

@@ -74,7 +74,6 @@ class CommentForm(Form):
 
 class SearchForm(Form):
     search = StringField('', validators=[Required()])
-    submit = SubmitField(u'查找')
-
+    submit = SubmitField(u'搜索')
 
 

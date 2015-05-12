@@ -45,12 +45,8 @@
         <li><a href="{{ url_for('auth.login') }}">登入</a></li>
         {% endif %}
     </ul>
-    <form class="navbar-form navbar-right" role="search">
-      <div class="form-group">
-          <input type="text" class="form-control" placeholder="search">
-      </div>
-      <button type="submit" class="btn btn-default">查找</button>
-    </form>
+  <form style="display: inline;" action="{{url_for('main.search')}}" method="post" name="search">
+      {{g.search_form.hidden_tag()}}{{g.search_form.search(size=20)}}<input type="submit" value="Search"></form>
   </div><!-- /.navbar-collapse -->
   </div><!-- /.container -->
 </nav>

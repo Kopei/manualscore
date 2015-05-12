@@ -18,13 +18,10 @@
             <form method="post" class="form">
 			{{ form.hidden_tag() }}
 			{{ input(form.title, placeholder="title", class="span9") }}
-			{{ input(form.body, placeholder="Markdown", class="span9", rows="10") }}
+			{{ input(form.body, placeholder="Markdown", class="span9", rows="16") }}
 			{{ input(form.tags, placeholder="Tags (英文逗号分开)", class="span9") }}
 
                     <div class="form-actions">
-                        <div class="pull-left">
-                            <a class="btn" href="#preview" id="previewbtn">预览</a>
-                        </div>
                         <div class="pull-right">
                             <a class="btn" href="{{ url_for('.index') }}">取消</a>
                             <button class="btn btn-success" type="submit">发布</button>

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
+
+
 COV = None
 if os.environ.get('FLASK_COVERAGE'):
     import coverage
@@ -11,11 +13,13 @@ from app import create_app, db
 from app.models import User, Follow, Role, Permission, Post, Comment
 from flask.ext.script import Manager, Shell
 from flask.ext.migrate import Migrate, MigrateCommand
+import flask.ext.whooshalchemy as whooshalchemy
+
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 manager = Manager(app)
 migrate = Migrate(app, db)
-
+whooshalchemy.whoosh_index(app, Post)
 
 def make_shell_context():
     return dict(app=app, db=db, User=User, Follow=Follow, Role=Role,
