@@ -9,6 +9,7 @@ from flask.ext.moment import Moment
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.pagedown import PageDown
+#from flask.ext.markdown import Markdown
 from config import config
 from assets import assets
 
@@ -18,6 +19,7 @@ mail = Mail()
 moment = Moment()
 db = SQLAlchemy()
 pagedown = PageDown()
+#markdown = Markdown()
 
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
@@ -36,6 +38,7 @@ def create_app(config_name):
     login_manager.init_app(app)
     pagedown.init_app(app)
     assets.init_app(app)
+    #markdown.init_app(app)
 
     if not app.debug and not app.testing and not app.config['SSL_DISABLE']:
         from flask.ext.sslify import SSLify

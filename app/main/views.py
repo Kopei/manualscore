@@ -144,7 +144,7 @@ def edit_profile_admin(id):
 @login_required
 def post(id):
     post = Post.query.get_or_404(id)
-    upload = Upload.query.get_or_404(id)
+    upload = Upload.query.get(id)
     form = CommentForm()
     if form.validate_on_submit():
         comment = Comment(body=form.body.data,
@@ -178,7 +178,9 @@ def edit(id):
         db.session.add(post)
         flash(u'文章已更新！')
         return redirect(url_for('.post', id=post.id))
+    form.title.data = post.title
     form.body.data = post.body
+    form.tags.data = post.tags
     return render_template('edit_post.html', form=form)
 
 
@@ -186,21 +188,29 @@ def edit(id):
 def create(id):
     form = PostForm()
     upload = UploadForm()
+    upload_flag = 0
     if current_user.can(Permission.WRITE_ARTICLES) and \
         upload.validate_on_submit():
         filename = secure_filename(upload.upload.data.filename)
         upload.upload.data.save('uploads/'+filename)
         upload_filename = Upload(upload=filename, author=current_user._get_current_object())
         db.session.add(upload_filename)
+        upload_flag = 1
         flash(u'您的手策已经上传，请发表评论！')
     if current_user.can(Permission.WRITE_ARTICLES) and \
         form.validate_on_submit():
-        post = Post(title=form.title.data, body=form.body.data,  tags=form.tags.data,
-                       author=current_user._get_current_object())
-        db.session.add(post)
-        flash(u"您已经发表了一份手策！")
-        return redirect(url_for('.index'))
+        if upload_flag == 1:
+            post = Post(title=form.title.data, body=form.body.data,  tags=form.tags.data,
+                           author=current_user._get_current_object())
+            db.session.add(post)
+            flash(u"您已经发表了一份手策！")
+            return redirect(url_for('.index'))
+        else:
+            flash(u"请先上传一份手册！ 注意：之前编辑的内容将不会被保存！")
     return render_template('create.html', form=form, upload=upload)
+
+
+
 
 
 @main.route('/preview', methods=["POST"])

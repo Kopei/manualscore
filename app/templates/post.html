@@ -13,7 +13,7 @@
     <div class="tab-pane active" id="editor">
         <form method="post" class="form">
             {{ form.hidden_tag() }}
-            {{ input(form.body, placeholder="Markdown", class="span9", rows="5") }}
+            {{ input(form.body, placeholder="评论", class="span9", rows="5") }}
             <div class="form-actions">
                 <div class="pull-right">
                     <a class="btn" href="{{ url_for('.index') }}">取消</a>
@@ -30,4 +30,9 @@
     {{ macros.pagination_widget(pagination, '.post', fragment='#comments', id=posts[0].id) }}
 </div>
 {% endif %}
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ pagedown.include_pagedown() }}
 {% endblock %}
