@@ -18,7 +18,7 @@
             <form method="post" class="form">
 			{{ form.hidden_tag() }}
 			{{ input(form.title, placeholder="title", class="span9") }}
-			{{ input(form.body, placeholder="Markdown", class="span9", rows="20") }}
+			{{ input(form.body, placeholder="Markdown", class="span9", rows="10") }}
 			{{ input(form.tags, placeholder="Tags (英文逗号分开)", class="span9") }}
 
                     <div class="form-actions">
@@ -35,7 +35,8 @@
             <div class="tab-pane" id="preview"></div>
         </div>
 {% endblock content %}
-        {% block sidebar %}
+
+{% block sidebar %}
         <h3>如何使用Markdown?</h3>
         <p>这个编辑器使用<a href="http://daringfireball.net/projects/markdown/">markdown</a>作为文本编辑。</p>
         <pre><code>
@@ -63,3 +64,7 @@
 
 {% endblock sidebar %}
 
+{% block scripts %}
+{{ super() }}
+{{ pagedown.include_pagedown() }}
+{% endblock %}

@@ -12,6 +12,33 @@
 </div>
 {% endblock %}
 
+{% block sidebar %}
+<h3>如何使用Markdown?</h3>
+<p>这个编辑器使用<a href="http://daringfireball.net/projects/markdown/">markdown</a>作为文本编辑。</p>
+<pre><code>
+    * I
+    * am
+    * a
+    * list</code></pre>
+将会显示成:
+<ul>
+    <li>I</li>
+    <li>am</li>
+    <li>a</li>
+    <li>list</li>
+</ul>
+<p><code>**粗体** and *斜体*</code> 将会显示成 <strong>粗体</strong> and <em>斜体</em>. </p>
+<p>创建链接: <code>[Github](http://www.github.com)</code>. 将会显示成： <a href="http://www.github.com">Github</a>.</p>
+<p>插入图片: <code>![](http://7xj0ry.com1.z0.glb.clouddn.com/lena.bmp)</code> 将会直接插入图片。</p>
+<p>文章标题:</p>
+<pre><code>
+    # Level 1
+    ## Level 2
+    ### Level 3
+</code></pre>
+<p>#符号数对应标题大写程度</p>
+
+{% endblock sidebar %}
 {% block scripts %}
 {{ super() }}
 {{ pagedown.include_pagedown() }}

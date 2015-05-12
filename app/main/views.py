@@ -4,7 +4,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 from flask import render_template, redirect, url_for, abort, flash, request, \
-    current_app, make_response, g
+    current_app, make_response, g, session
 from flask.ext.login import login_required, current_user
 from flask.ext.sqlalchemy import get_debug_queries
 from . import main
@@ -188,25 +188,28 @@ def edit(id):
 def create(id):
     form = PostForm()
     upload = UploadForm()
-    upload_flag = 0
     if current_user.can(Permission.WRITE_ARTICLES) and \
         upload.validate_on_submit():
         filename = secure_filename(upload.upload.data.filename)
         upload.upload.data.save('uploads/'+filename)
         upload_filename = Upload(upload=filename, author=current_user._get_current_object())
         db.session.add(upload_filename)
-        upload_flag = 1
         flash(u'您的手策已经上传，请发表评论！')
-    if current_user.can(Permission.WRITE_ARTICLES) and \
+        session['upload_flag'] = 1
+    elif current_user.can(Permission.WRITE_ARTICLES) and \
         form.validate_on_submit():
-        if upload_flag == 1:
-            post = Post(title=form.title.data, body=form.body.data,  tags=form.tags.data,
-                           author=current_user._get_current_object())
-            db.session.add(post)
-            flash(u"您已经发表了一份手策！")
-            return redirect(url_for('.index'))
-        else:
+        try:
+            session['upload_flag'] == 1
+        except:
             flash(u"请先上传一份手册！ 注意：之前编辑的内容将不会被保存！")
+            return redirect(url_for('.create', id=id))
+        post = Post(title=form.title.data, body=form.body.data,  tags=form.tags.data,
+                    author=current_user._get_current_object())
+        db.session.add(post)
+        flash(u"您已经发表了一份手策！")
+        session.pop('upload_flag', None)
+        return redirect(url_for('.index'))
+
     return render_template('create.html', form=form, upload=upload)
 
 
