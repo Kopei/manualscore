@@ -142,6 +142,9 @@ def edit_profile_admin(id):
 @login_required
 def post(id):
     post = Post.query.get_or_404(id)
+    if request.method == 'GET':
+        post.click_num += 1
+        db.session.add(post)
     upload = Upload.query.get(id)
     form = CommentForm()
     if form.validate_on_submit():

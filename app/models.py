@@ -13,7 +13,7 @@ from flask.ext.login import UserMixin, AnonymousUserMixin
 from app.exceptions import ValidationError
 from . import db, login_manager
 import flask.ext.whooshalchemy as whooshalchemy
-from app import create_app
+from jieba.analyse import ChineseAnalyzer
 
 
 class Permission:
@@ -307,6 +307,8 @@ class Post(db.Model):
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
     tags = db.Column(db.UnicodeText)
     title = db.Column(db.UnicodeText)
+    click_num = db.Column(db.Integer, default=0)
+
 
     @staticmethod
     def generate_fake(count=100):
@@ -333,6 +335,11 @@ class Post(db.Model):
                             'a': ['href', 'rel'],
                             'img': ['src', 'alt'],
                         }
+#        analyzer = ChineseAnalyzer()
+#        tokens = []
+#        for token in analyzer(value):
+#            tokens.append(token.text)
+#        target.body_token = ' '.join(tokens)
         target.body_html = bleach.linkify(bleach.clean(
             markdown(value, output_format='html'),
             tags=allowed_tags, attributes=allowed_attrs, strip=True))

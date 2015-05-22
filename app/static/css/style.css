@@ -130,6 +130,9 @@ div.post-content {
 div.post-footer {
     text-align: right;
 }
+div.post-click_number {
+    text-align: left;
+}
 ul.comments {
     list-style-type: none;
     padding: 0px;

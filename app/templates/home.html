@@ -37,3 +37,14 @@
 </div>
 {% endblock %}
 
+{% block sidebar %}
+  <h3>最近热门</h3>
+    <ul>
+        {% for topic in hot_topics %}
+        <li>
+            <div class=""></div><a href="{{ url_for('.post', id = topic.author_id) }}">{{topic.title}}</a>
+        </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
