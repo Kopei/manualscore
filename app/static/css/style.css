@@ -123,6 +123,10 @@ div.post-author {
 div.post-thumbnail {
     position: absolute;
 }
+div.post-title {
+    font-size: 120%;
+    font-weight: bold;
+}
 div.post-content {
     margin-left: 48px;
     min-height: 48px;
@@ -132,6 +136,10 @@ div.post-footer {
 }
 div.post-click_number {
     text-align: left;
+    font-size: 90%
+}
+span.post-tags {
+    margin-left: 6px;
 }
 ul.comments {
     list-style-type: none;

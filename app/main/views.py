@@ -11,7 +11,7 @@ from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm, \
     CommentForm, SearchForm, UploadForm
 from .. import db
-from ..models import Permission, Role, User, Post, Comment, Upload
+from ..models import Permission, Role, User, Post, Comment, Upload, Tag
 from ..decorators import admin_required, permission_required
 from werkzeug import secure_filename
 from config import Config
@@ -57,7 +57,9 @@ def index():
         page, per_page=current_app.config['POSTS_PER_PAGE'],
         error_out=False)
     posts = pagination.items
-    return render_template('home.html', form=form, posts=posts,
+    hot_topics = Post.query.order_by(Post.click_num.desc()).limit(10)
+    hot_tags = Tag.query.order_by(Tag.name.desc()).limit(10)
+    return render_template('home.html', form=form, posts=posts, hot_topics=hot_topics, hot_tags=hot_tags,
                            show_followed=show_followed, pagination=pagination)
 
 @main.route('/search', methods=['POST'])
@@ -176,6 +178,8 @@ def edit(id):
     form = PostForm()
     if form.validate_on_submit():
         post.body = form.body.data
+        post.title = form.title.data
+        post.tags = form.tags.data
         db.session.add(post)
         flash(u'文章已更新！')
         return redirect(url_for('.post', id=post.id))
@@ -204,9 +208,15 @@ def create(id):
         except:
             flash(u"请先上传一份手册！ 注意：之前编辑的内容将不会被保存！")
             return redirect(url_for('.create', id=id))
-        post = Post(title=form.title.data, body=form.body.data,  tags=form.tags.data,
+        post = Post(title=form.title.data, body=form.body.data, tags=form.tags.data,
                     author=current_user._get_current_object())
         db.session.add(post)
+        db.session.commit()
+        for tag in form.tags.data.split(',') or form.tags.data.split('，'):
+            tag = Tag(name=tag, post_id=Post.query.filter_by(author=current_user._get_current_object()).first().id)
+            db.session.add(tag)
+
+
         flash(u"您已经发表了一份手策！")
         session.pop('upload_flag', None)
         return redirect(url_for('.index'))
@@ -214,6 +224,17 @@ def create(id):
     return render_template('create.html', form=form, upload=upload)
 
 
+@main.route('/tags/<tag>')
+def tag_view(tag):
+    posts = Post.query.filter_by(id=tag)
+    page = request.args.get('page', 1, type=int)
+    if page == -1:
+        page = (posts.count() - 1) / \
+               current_app.config['POSTS_PER_PAGE'] + 1
+    pagination = posts.paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
+        error_out=False)
+    posts = pagination.items
+    return render_template('tags_page.html', posts=posts)
 
 
 

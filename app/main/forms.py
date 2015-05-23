@@ -20,6 +20,7 @@ class NameForm(Form):
 class EditProfileForm(Form):
     name = StringField(u'实名', validators=[Length(0, 64)])
     location = StringField(u'地区', validators=[Length(0, 64)])
+    degree = StringField(u'学历', validators=[Length(0, 31)])
     occupation = StringField(u"所属行业", validators=[Length(0,64)])
     about_me = TextAreaField(u'关于我')
     submit = SubmitField(u'提交')
@@ -59,7 +60,7 @@ class PostForm(Form):
 
     title = StringField(u'标题', validators=[Required(), Length(1, 128)])
     body = PageDownField(u"发表对一份手册的看法吧！", validators=[Required()])
-    tags = StringField(u'标签', validators=[Required()])
+    tags = StringField(u'标签', validators=[Required(), Length(1, 128)])
     submit = SubmitField(u'发表')
 
 

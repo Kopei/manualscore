@@ -12,6 +12,8 @@
                 <a href="{{url_for('.post', id=post.id)}}">{{ post.title }}</a>
             </div>
             <div class="post-author">by <a href="{{ url_for('.user', username=post.author.username) }}">{{ post.author.username }}</a></div>
+            <div class="post-click_number"><span class="post-click_number">浏览数：{{post.click_num}}</span>
+                {%for tag in post.tags.split(',') %}<a href="#"><span class="post-tags label label-primary">{{tag}}</span></a>{% endfor %}</div>
             <div class="post-body">
                 {% if post.body_html %}
                     {{ post.body_html | safe }}

@@ -10,7 +10,7 @@ if os.environ.get('FLASK_COVERAGE'):
     COV.start()
 
 from app import create_app, db
-from app.models import User, Follow, Role, Permission, Post, Comment
+from app.models import User, Follow, Role, Permission, Post, Comment, Tag, Upload
 from flask.ext.script import Manager, Shell
 from flask.ext.migrate import Migrate, MigrateCommand
 import flask.ext.whooshalchemy as whooshalchemy
@@ -22,7 +22,7 @@ migrate = Migrate(app, db)
 whooshalchemy.whoosh_index(app, Post)
 
 def make_shell_context():
-    return dict(app=app, db=db, User=User, Follow=Follow, Role=Role,
+    return dict(app=app, db=db, User=User, Follow=Follow, Role=Role, Tag=Tag, Upload=Upload,
                 Permission=Permission, Post=Post, Comment=Comment)
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)

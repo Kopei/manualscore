@@ -42,7 +42,15 @@
     <ul>
         {% for topic in hot_topics %}
         <li>
-            <div class=""></div><a href="{{ url_for('.post', id = topic.author_id) }}">{{topic.title}}</a>
+            <div class=""></div><a href="{{ url_for('.post', id = topic.id) }}">{{topic.title}}</a>
+        </li>
+        {% endfor %}
+    </ul>
+    <h3>标签</h3>
+    <ul>
+        {% for tag in hot_tags %}
+        <li>
+            <div class=""></div><a href="{{ url_for('.tag_view', tag = tag.post_id) }}">{{tag.name}}</a>
         </li>
         {% endfor %}
     </ul>

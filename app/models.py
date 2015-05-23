@@ -78,6 +78,8 @@ class User(UserMixin, db.Model):
     location = db.Column(db.Unicode(64))
     about_me = db.Column(db.UnicodeText())
     occupation = db.Column(db.UnicodeText())
+    gender = db.Column(db.Boolean)
+    industry = db.Column(db.Unicode(32))
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
@@ -95,6 +97,7 @@ class User(UserMixin, db.Model):
                                 lazy='dynamic',
                                 cascade='all, delete-orphan')
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
+    download = db.relationship('Download', backref='user', lazy='dynamic')
 
     @staticmethod
     def generate_fake(count=100):
@@ -305,7 +308,9 @@ class Post(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
-    tags = db.Column(db.UnicodeText)
+    tags = db.Column(db.Unicode(64))
+    tag_name = db.relationship('Tag', backref='post', lazy='dynamic')
+    upload = db.relationship('Upload', backref='post', lazy='dynamic')
     title = db.Column(db.UnicodeText)
     click_num = db.Column(db.Integer, default=0)
 
@@ -319,7 +324,10 @@ class Post(db.Model):
         user_count = User.query.count()
         for i in range(count):
             u = User.query.offset(randint(0, user_count - 1)).first()
-            p = Post(body=forgery_py.lorem_ipsum.sentences(randint(1, 5)),
+            p = Post(title=forgery_py.lorem_ipsum.sentences(randint(1, 5)),
+                     body=forgery_py.lorem_ipsum.sentences(randint(1, 5)),
+                     click_num=randint(1, 100),
+                     tags=forgery_py.lorem_ipsum.word(),
                      timestamp=forgery_py.date.date(True),
                      author=u)
             db.session.add(p)
@@ -365,17 +373,66 @@ class Post(db.Model):
             raise ValidationError('post does not have a body')
         return Post(body=body)
 
+    def __repr__(self):
+        return '<Post %r>' % self.title
 
 db.event.listen(Post.body, 'set', Post.on_changed_body)
 
 
+class Tag(db.Model):
+    __tablename__ = 'tags'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Unicode(32))
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+
+    @staticmethod
+    def generate_fake(count=100):
+        from random import seed, randint
+        import forgery_py
+
+        seed()
+        user_count = User.query.count()
+        for i in range(count):
+            post = Post.query.offset(randint(0, user_count - 1)).first()
+            p = Tag(name=forgery_py.lorem_ipsum.word(), post=post)
+            db.session.add(p)
+            db.session.commit()
+
+
 class Upload(db.Model):
-    __talbename__ = 'uploads'
+    __tablename__ = 'uploads'
     id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
     upload = db.Column(db.Text, index=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    download = db.relationship('Download', backref='file', lazy='dynamic')
+
+
+class Download(db.Model):
+    __tablename__ = 'downloads'
+    id = db.Column(db.Integer, primary_key=True)
+    download_user = db.Column(db.Integer, db.ForeignKey('users.id'))
+    download_file = db.Column(db.Integer, db.ForeignKey('uploads.id'))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+
+class Portrait(db.Model):
+    __tablename__ = 'portraits'
+    id = db.Column(db.Integer, primary_key=True)
+    age = db.Column(db.SmallInteger)
+    occupation = db.Column(db.Unicode(32))
+    gender = db.Column(db.Boolean)
+    industry = db.Column(db.Unicode(32))
+
+    @staticmethod
+    def on_changed_industry(target, value, oldvalue, initiator):
+        target.industry = value
+
+
+db.event.listen(User.industry, 'set', Portrait.on_changed_industry)
+
+
 
 
 class Comment(db.Model):
