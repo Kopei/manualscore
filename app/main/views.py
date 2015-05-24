@@ -99,6 +99,7 @@ def edit_profile():
     if form.validate_on_submit():
         current_user.name = form.name.data
         current_user.location = form.location.data
+        current_user.degree = form.degree.data
         current_user.about_me = form.about_me.data
         current_user.occupation = form.occupation.data
         db.session.add(current_user)

@@ -14,6 +14,7 @@
             {% if user.location %}
                 <b>来自:</b> <a href="http://www.google.cn/maps/place/{{ user.location }}">{{ user.location }}</a><br>
             {% endif %}
+            {% if user.occupation %}<b>行业：</b>{{ user.occupation }}<br>{% endif %}
         </p>
         {% endif %}
         {% if current_user.is_administrator() %}
