@@ -80,6 +80,7 @@ class User(UserMixin, db.Model):
     occupation = db.Column(db.UnicodeText())
     gender = db.Column(db.Boolean)
     industry = db.Column(db.Unicode(32))
+    degree = db.Column(db.Unicode(32))
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
