@@ -103,6 +103,7 @@ def edit_profile():
         current_user.about_me = form.about_me.data
         current_user.occupation = form.occupation.data
         db.session.add(current_user)
+        db.session.commit()
         flash(u'个人资料已更新。')
         return redirect(url_for('.user', username=current_user.username))
     form.name.data = current_user.name
