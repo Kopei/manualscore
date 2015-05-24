@@ -16,7 +16,7 @@ from flask.ext.migrate import Migrate, MigrateCommand
 import flask.ext.whooshalchemy as whooshalchemy
 
 
-app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+app = create_app(os.getenv('CONFIG') or 'default')
 manager = Manager(app)
 migrate = Migrate(app, db)
 whooshalchemy.whoosh_index(app, Post)
@@ -64,12 +64,15 @@ def deploy():
     """Run deployment tasks."""
     from flask.ext.migrate import upgrade
     from app.models import Role, User
-
+    from app import db
     # migrate database to latest revision
+    db.create_all()
+
+    Role.insert_roles()
+
     upgrade()
 
     # create user roles
-    Role.insert_roles()
 
     # create self-follows for all users
     #User.add_self_follows()
