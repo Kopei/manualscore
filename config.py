@@ -15,7 +15,7 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_SUBJECT_PREFIX = u'[手策]'
     MAIL_SENDER = u'手策管理员 <kopei_nan@126.com>'
-    ADMIN = os.environ.get('FLASKY_ADMIN')
+    ADMIN = os.environ.get('ADMIN')
     POSTS_PER_PAGE = 20
     FOLLOWERS_PER_PAGE = 50
     COMMENTS_PER_PAGE = 30
@@ -63,9 +63,9 @@ class ProductionConfig(Config):
                 secure = ()
         mail_handler = SMTPHandler(
             mailhost=(cls.MAIL_SERVER, cls.MAIL_PORT),
-            fromaddr=cls.FLASKY_MAIL_SENDER,
-            toaddrs=[cls.FLASKY_ADMIN],
-            subject=cls.FLASKY_MAIL_SUBJECT_PREFIX + ' Application Error',
+            fromaddr=cls.MAIL_SENDER,
+            toaddrs=[cls.ADMIN],
+            subject=cls.MAIL_SUBJECT_PREFIX + ' Application Error',
             credentials=credentials,
             secure=secure)
         mail_handler.setLevel(logging.ERROR)
