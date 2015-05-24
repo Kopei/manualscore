@@ -15,7 +15,6 @@ from ..models import Permission, Role, User, Post, Comment, Upload, Tag
 from ..decorators import admin_required, permission_required
 from werkzeug import secure_filename
 from config import Config
-from ..editor import Processors
 
 
 @main.after_app_request
