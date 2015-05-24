@@ -46,3 +46,6 @@ venv
 
 # foreman
 .env
+
+# uploads
+uploads
