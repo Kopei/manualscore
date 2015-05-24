@@ -108,6 +108,7 @@ def edit_profile():
         return redirect(url_for('.user', username=current_user.username))
     form.name.data = current_user.name
     form.location.data = current_user.location
+    form.degree.data = current_user.degree
     form.about_me.data = current_user.about_me
     form.occupation.data = current_user.occupation
     return render_template('edit_profile.html', form=form)
@@ -128,6 +129,7 @@ def edit_profile_admin(id):
         user.location = form.location.data
         user.about_me = form.about_me.data
         db.session.add(user)
+        db.session.commit()
         flash(u'资料已被更新。')
         return redirect(url_for('.user', username=user.username))
     form.email.data = user.email
@@ -148,6 +150,7 @@ def post(id):
     if request.method == 'GET':
         post.click_num += 1
         db.session.add(post)
+        db.session.commit()
     upload = Upload.query.get(id)
     form = CommentForm()
     if form.validate_on_submit():
@@ -155,6 +158,7 @@ def post(id):
                           post=post,
                           author=current_user._get_current_object())
         db.session.add(comment)
+        db.session.commit()
         flash(u'你的评论已经被发表。')
         return redirect(url_for('.post', id=post.id, page=-1))
     page = request.args.get('page', 1, type=int)
@@ -182,6 +186,7 @@ def edit(id):
         post.title = form.title.data
         post.tags = form.tags.data
         db.session.add(post)
+        db.session.commit()
         flash(u'文章已更新！')
         return redirect(url_for('.post', id=post.id))
     form.title.data = post.title
@@ -200,6 +205,7 @@ def create(id):
         upload.upload.data.save('uploads/'+filename)
         upload_filename = Upload(upload=filename, author=current_user._get_current_object())
         db.session.add(upload_filename)
+        db.session.commit()
         flash(u'您的手策已经上传，请发表评论！')
         session['upload_flag'] = 1
     elif current_user.can(Permission.WRITE_ARTICLES) and \
@@ -216,6 +222,7 @@ def create(id):
         for tag in form.tags.data.split(',') or form.tags.data.split('，'):
             tag = Tag(name=tag, post_id=Post.query.filter_by(author=current_user._get_current_object()).first().id)
             db.session.add(tag)
+            db.session.commit()
 
 
         flash(u"您已经发表了一份手策！")
@@ -362,6 +369,7 @@ def moderate_enable(id):
     comment = Comment.query.get_or_404(id)
     comment.disabled = False
     db.session.add(comment)
+    db.session.commit()
     return redirect(url_for('.moderate',
                             page=request.args.get('page', 1, type=int)))
 
@@ -373,5 +381,6 @@ def moderate_disable(id):
     comment = Comment.query.get_or_404(id)
     comment.disabled = True
     db.session.add(comment)
+    db.session.commit()
     return redirect(url_for('.moderate',
                             page=request.args.get('page', 1, type=int)))

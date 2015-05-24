@@ -116,6 +116,7 @@ class User(UserMixin, db.Model):
                      about_me=forgery_py.lorem_ipsum.sentence(),
                      member_since=forgery_py.date.date(True))
             db.session.add(u)
+            db.session.commit()
             try:
                 db.session.commit()
             except IntegrityError:
@@ -184,6 +185,7 @@ class User(UserMixin, db.Model):
             return False
         self.password = new_password
         db.session.add(self)
+        db.session.commit()
         return True
 
     def generate_email_change_token(self, new_email, expiration=3600):
@@ -207,6 +209,7 @@ class User(UserMixin, db.Model):
         self.avatar_hash = hashlib.md5(
             self.email.encode('utf-8')).hexdigest()
         db.session.add(self)
+        db.session.commit()
         return True
 
     def can(self, permissions):
@@ -219,6 +222,7 @@ class User(UserMixin, db.Model):
     def ping(self):
         self.last_seen = datetime.utcnow()
         db.session.add(self)
+        db.session.commit()
 
     def gravatar(self, size=100, default='identicon', rating='g'):
         if request.is_secure:
@@ -234,6 +238,7 @@ class User(UserMixin, db.Model):
         if not self.is_following(user):
             f = Follow(follower=self, followed=user)
             db.session.add(f)
+            db.session.commit()
 
     def unfollow(self, user):
         f = self.followed.filter_by(followed_id=user.id).first()
